@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(cryptonite)
 
-set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_C_COMPILER "emcc")
 #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m32")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g2 ")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lpthread -fPIC -I/libs/libee")
@@ -77,22 +77,7 @@ add_executable(cryptoniteUtest "")
 target_sources(cryptoniteUtest PUBLIC ${CRYPTONITE_SOURCE} ${CRYPTONITE_UTEST} ${CRYPTONITE_TEST_UTILS} ${PTHREAD_SOURCE})
 target_link_libraries(cryptoniteUtest m pthread)
 
-link_directories(cryptoniteXtest
-        libs/bee2/linux_x86-64/
-        libs/gcrypt/linux_x86-64/
-        libs/cppcrypto/linux_x86-64/
-        libs/libressl/linux_x86-64/
-        )
-add_executable(cryptoniteXtest "")
-target_sources(cryptoniteXtest PUBLIC ${CRYPTONITE_SOURCE} ${CRYPTONITE_XTEST} ${CRYPTONITE_TEST_UTILS} ${XTEST_LIBS_HEADERS} ${PTHREAD_SOURCE})
-target_link_libraries(cryptoniteXtest
-        libcppcrypto.a
-        libbee2.a
-        libgcrypt.a
-        libgpg-error.a
-        libcrypto.a
-        libtls.a
-        )
+
 
 add_executable(pkixUtest "")
 target_sources(pkixUtest PUBLIC ${PKIX_SOURCE} ${STORAGE_SOURCE} ${CRYPTONITE_TEST_UTILS} ${PKIX_UTEST} ${CRYPTONITE_SOURCE} ${ASN1_SOURCE} ${PKIX_TEST_UTILS} ${PTHREAD_SOURCE})
@@ -103,7 +88,7 @@ target_sources(pkixExample PUBLIC ${PKIX_SOURCE} ${STORAGE_SOURCE} ${PKIX_EXAMPL
 target_link_libraries(pkixExample m)
 
 add_executable(asn1Utest "")
-target_sources(asn1Utest PUBLIC ${ASN1_SOURCE} ${ASN1_UTEST} ${CRYPTONITE_TEST_UTILS} ${CRYPTONITE_SOURCE} ${ASN1_SOURCE} ${PKIX_TEST_UTILS} ${PTHREAD_SOURCE})
+target_sources(asn1Utest PUBLIC ${ASN1_SOURCE} ${ASN1_UTEST} ${CRYPTONITE_TEST_UTILS} ${CRYPTONITE_SOURCE} ${ASN1_SOURCE} ${PKIX_SOURCE} ${PKIX_TEST_UTILS} ${PTHREAD_SOURCE})
 target_link_libraries(asn1Utest m)
 
 link_directories(storageUtest
@@ -113,6 +98,9 @@ add_executable(storageUtest "")
 target_sources(storageUtest PUBLIC ${ASN1_SOURCE} ${PKIX_SOURCE} ${CRYPTONITE_TEST_UTILS} ${CRYPTONITE_SOURCE} ${ASN1_SOURCE} ${STORAGE_UTEST} ${STORAGE_SOURCE} ${PKIX_TEST_UTILS} ${PTHREAD_SOURCE})
 target_link_libraries(storageUtest m)
 
-add_executable(cryptonite ${CRYPTONITE_SOURCE} ${CRYPTONITE_ATEST} ${CRYPTONITE_PTEST} ${CRYPTONITE_UTEST} ${CRYPTONITE_TEST_UTILS})
+add_library(cryptonite SHARED ${CRYPTONITE_SOURCE} ${PTHREAD_SOURCE})
 
+add_library(pkix SHARED ${PKIX_SOURCE} ${CRYPTONITE_SOURCE} ${PTHREAD_SOURCE})
+
+add_library(storage SHARED ${STORAGE_SOURCE} ${PTHREAD_SOURCE})
 
